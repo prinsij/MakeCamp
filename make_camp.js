@@ -1,14 +1,25 @@
 function get_locations(listing) {
     let result = new Set();
+    let process_sections = function(sections) {
+        for (let section of sections) {
+            for (let time of section.times) {
+                result.add(time[time.length - 1]);
+            }
+        }
+    };
     for (let department in listing.courses) {
         for (let course of listing.courses[department]) {
             if (course.hasOwnProperty('core')) {
-                for (let section of course.core) {
-                    for (let time of section.times) {
-                        result.add(time[time.length - 1]);
-                    }
-                }
+                process_sections(course.core);
             }
+            if (course.hasOwnProperty('tutorial')) {
+                process_sections(course.tutorial);
+            }
+            // exclude lab locations because they are
+            // generally locked / unsuitable
+            //if (course.hasOwnProperty('lab')) {
+            //    process_sections(course.lab);
+            //}
         }
     }
     return result;
@@ -72,10 +83,17 @@ function time_sub(time1, time2) {
     return 60 * (time1[0] - time2[0]) + (time1[1] - time2[1]);
 }
 
-function find_unoccupied(listing, day_of_week, start_time, end_time) {
-    let locations = get_locations(listing);
+function time_print(time) {
+    return time[0] + ':' + time[1];
+}
+
+function find_current_lectures(listing, day_of_week, start_time, end_time) {
+    let result = [];
     for (let department in listing.courses) {
         for (let course of listing.courses[department]) {
+            if (course.term !== 1) {
+                continue;
+            }
             if (course.hasOwnProperty('core')) {
                 for (let section of course.core) {
                     for (let timeslot of section.times) {
@@ -84,11 +102,48 @@ function find_unoccupied(listing, day_of_week, start_time, end_time) {
                             if (time.day_of_week === day_of_week
                                 && time_le(time.start_time, end_time)
                                 && time_le(start_time, time.end_time)) {
-                                locations.delete(location);
+                                result.push(`${location}<br>
+                                            ${course.name}<br>
+                                            ${time_print(time.start_time)}-${time_print(time.end_time)}`);
                             }
                         }
                     }
                 }
+            }
+        }
+    }
+    return result;
+}
+
+function find_unoccupied(listing, day_of_week, start_time, end_time) {
+    let locations = get_locations(listing);
+    let process_sections = function(sections) {
+        for (let section of sections) {
+            for (let timeslot of section.times) {
+                if (timeslot.length > 1) {
+                    let [time, location] = decode_timeslot(timeslot);
+                    if (time.day_of_week === day_of_week
+                        && time_le(time.start_time, end_time)
+                        && time_le(start_time, time.end_time)) {
+                        locations.delete(location);
+                    }
+                }
+            }
+        }
+    };
+    for (let department in listing.courses) {
+        for (let course of listing.courses[department]) {
+            if (course.term !== 1) {
+                continue;
+            }
+            if (course.hasOwnProperty('core')) {
+                process_sections(course.core);
+            }
+            if (course.hasOwnProperty('tutorial')) {
+                process_sections(course.tutorial);
+            }
+            if (course.hasOwnProperty('lab')) {
+                process_sections(course.lab);
             }
         }
     }
@@ -98,12 +153,21 @@ function find_unoccupied(listing, day_of_week, start_time, end_time) {
 function handle_form_submit(event) {
     let building_input = document.getElementById('input-building');
     let day_of_week = document.getElementById('input-day').value;
-    let start_time = document.getElementById('input-time-start').value.split(':');
+    let start_time = document.getElementById('input-time-start').value.split(':').map(Number);
     let time_length = Number(document.getElementById('input-time-length').value);
-    let end_time = [start_time[0] + time_length, start_time[1]];
-    let unoccupied = Array.from(find_unoccupied(listing, day_of_week, start_time, end_time));
-    let filtered = unoccupied.filter(loc => loc.startsWith(building_input.value));
-    filtered.sort();
+    let end_time = [start_time[0] + time_length, start_time[1] - 1];
+
+    let filtered = [];
+    let checkbox = document.getElementById('input-empty-only')
+    if (checkbox.checked) {
+        let unoccupied = Array.from(find_unoccupied(listing, day_of_week, start_time, end_time));
+        filtered = unoccupied.filter(loc => loc.startsWith(building_input.value));
+        filtered.sort();
+    } else {
+        let curr_lectures = find_current_lectures(listing, day_of_week, start_time, end_time);
+        filtered = curr_lectures.filter(loc => loc.startsWith(building_input.value));
+        filtered.sort();
+    }
     let output_div = document.getElementById('request-output');
     output_div.innerHTML = '';
     for (let room of filtered) {
@@ -118,6 +182,12 @@ function handle_form_submit(event) {
 window.onload = function() {
     let input_form = document.getElementById('submit-data');
     input_form.addEventListener('click', handle_form_submit, false);
+    let input_building = document.getElementById('input-building');
+    input_building.onkeydown = function (event) {
+        if (event.keyCode === 13) {
+            handle_form_submit(undefined);
+        }
+    };
     let [curr_day_of_week, curr_timeslot] = get_current_time();
     document.getElementById('input-day').selectedIndex = curr_day_of_week;
     document.getElementById('input-time-start').selectedIndex = curr_timeslot;
