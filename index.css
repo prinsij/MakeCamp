@@ -68,6 +68,13 @@ input, select, button {
     margin: 0.5em;
 }
 
+#submit-data {
+    background: #8ED081;
+    border-radius: .25em;
+    border: 1px solid grey;
+    box-shadow: 2px 2px #373F51;
+}
+
 input[type=checkbox] {
     transform: scale(1.5);
 }
