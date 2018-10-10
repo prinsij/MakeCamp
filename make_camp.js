@@ -179,6 +179,7 @@ function handle_form_submit(event) {
         room_div.innerHTML = room;
         output_div.appendChild(room_div);
     }
+    output_div.scrollIntoView({behavior: 'smooth', block: 'end'});
 }
 
 window.onload = function() {
