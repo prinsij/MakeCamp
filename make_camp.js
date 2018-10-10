@@ -55,18 +55,18 @@ function get_current_time() {
         [15, 30],
         [16, 30],
         [17, 30],
-        [19, 0],
-        [22, 0]
+        [19, 0]
     ];
     let chosen_slot = -1;
+    let next_day = false;
     for (let i = 0; i < timeslots.length; i++) {
-        if (i === timeslots.length) {
-            chosen_slot = 0;
-            break;
-        }
-        if (time_le(timeslots[i], current_time) && !time_le(timeslots[i+1], current_time)) {
-            if (time_sub(timeslots[i+1], current_time) > 40) {
+        let last_iter = i === timeslots.length - 1;
+        if (time_le(timeslots[i], current_time) && (last_iter || !time_le(timeslots[i+1], current_time))) {
+            if (time_sub(current_time, timeslots[i]) < 40) {
                 chosen_slot = i;
+            } else if (last_iter) {
+                chosen_slot = 0;
+                next_day = true;
             } else {
                 chosen_slot = i + 1;
             }
@@ -76,7 +76,7 @@ function get_current_time() {
     if (chosen_slot === -1) {
         throw 'bug in slot choosing logic';
     }
-    return [today.getDay(), chosen_slot];
+    return [today.getDay() + next_day, chosen_slot];
 }
 
 function time_sub(time1, time2) {
@@ -179,7 +179,6 @@ function handle_form_submit(event) {
         room_div.innerHTML = room;
         output_div.appendChild(room_div);
     }
-    console.log(filtered);
 }
 
 window.onload = function() {
