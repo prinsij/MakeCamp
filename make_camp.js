@@ -158,15 +158,18 @@ function handle_form_submit(event) {
     let end_time = [start_time[0] + time_length, start_time[1] - 1];
 
     let filtered = [];
-    let checkbox = document.getElementById('input-empty-only')
-    if (checkbox.checked) {
+    let empty_only_selector = document.getElementById('input-empty-only');
+    if (empty_only_selector.value === 'Empty') {
         let unoccupied = Array.from(find_unoccupied(listing, day_of_week, start_time, end_time));
         filtered = unoccupied.filter(loc => loc.startsWith(building_input.value));
         filtered.sort();
-    } else {
+    } else if (empty_only_selector.value === 'All') {
         let curr_lectures = find_current_lectures(listing, day_of_week, start_time, end_time);
-        filtered = curr_lectures.filter(loc => loc.startsWith(building_input.value));
+        let unoccupied = Array.from(find_unoccupied(listing, day_of_week, start_time, end_time));
+        filtered = curr_lectures.concat(unoccupied).filter(loc => loc.startsWith(building_input.value));
         filtered.sort();
+    } else {
+        throw 'Unexpected selection value';
     }
     let output_div = document.getElementById('request-output');
     output_div.innerHTML = '';

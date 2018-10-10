@@ -43,10 +43,10 @@
             <div id="input-building-div" style="display: flex; justify-content: space-between">
                 building &nbsp <input type="text" title="Building" id="input-building">
             </div>
-            <div>
-                <input type="checkbox" id="input-empty-only" title="Empty Only" name="onlyEmpty" checked>empty only<br>
-            </div>
-
+            <select id="input-empty-only" title="Empty Only" name="onlyEmpty">
+                <option value="Empty">Empty rooms only</option>
+                <option value="All">All rooms</option>
+            </select>
             <button id="submit-data">Submit</button>
         </div>
         <div id="request-output">
