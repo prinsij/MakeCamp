@@ -164,7 +164,7 @@ function find_unoccupied(listing, day_of_week, start_time, end_time) {
 }
 
 function handle_form_submit(event) {
-    let building_input = document.getElementById('input-building');
+    let building = document.getElementById('input-building').value.toUpperCase();
     let day_of_week = document.getElementById('input-day').value;
     let start_time = document.getElementById('input-time-start').value.split(':').map(Number);
     let time_length = Number(document.getElementById('input-time-length').value);
@@ -174,16 +174,16 @@ function handle_form_submit(event) {
     let empty_only_selector = document.getElementById('input-empty-only');
     if (empty_only_selector.value === 'Empty') {
         let unoccupied = Array.from(find_unoccupied(listing, day_of_week, start_time, end_time));
-        filtered = unoccupied.filter(loc => loc.startsWith(building_input.value));
+        filtered = unoccupied.filter(loc => loc.startsWith(building));
         filtered.sort();
     } else if (empty_only_selector.value === 'All') {
         let curr_lectures = find_current_lectures(listing, day_of_week, start_time, end_time)
-            .filter(obj => obj.room.startsWith(building_input.value))
+            .filter(obj => obj.room.startsWith(building))
             .map(obj => `${obj.room}<br>
                          ${obj.course_name}<br>
                          ${time_print(obj.start_time)}-${time_print(obj.end_time)}`);
         let unoccupied = Array.from(find_unoccupied(listing, day_of_week, start_time, end_time))
-            .filter(loc => loc.startsWith(building_input.value));
+            .filter(loc => loc.startsWith(building));
         filtered = curr_lectures.concat(unoccupied);
         filtered.sort();
     } else {
