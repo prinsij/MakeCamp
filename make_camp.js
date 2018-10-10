@@ -102,9 +102,12 @@ function find_current_lectures(listing, day_of_week, start_time, end_time) {
                             if (time.day_of_week === day_of_week
                                 && time_le(time.start_time, end_time)
                                 && time_le(start_time, time.end_time)) {
-                                result.push(`${location}<br>
-                                            ${course.name}<br>
-                                            ${time_print(time.start_time)}-${time_print(time.end_time)}`);
+                                result.push({
+                                    start_time: time.start_time,
+                                    end_time: time.end_time,
+                                    course_name: course.name,
+                                    room: location
+                                });
                             }
                         }
                     }
@@ -164,9 +167,14 @@ function handle_form_submit(event) {
         filtered = unoccupied.filter(loc => loc.startsWith(building_input.value));
         filtered.sort();
     } else if (empty_only_selector.value === 'All') {
-        let curr_lectures = find_current_lectures(listing, day_of_week, start_time, end_time);
-        let unoccupied = Array.from(find_unoccupied(listing, day_of_week, start_time, end_time));
-        filtered = curr_lectures.concat(unoccupied).filter(loc => loc.startsWith(building_input.value));
+        let curr_lectures = find_current_lectures(listing, day_of_week, start_time, end_time)
+            .filter(obj => obj.room.startsWith(building_input.value))
+            .map(obj => `${obj.room}<br>
+                         ${obj.course_name}<br>
+                         ${time_print(obj.start_time)}-${time_print(obj.end_time)}`);
+        let unoccupied = Array.from(find_unoccupied(listing, day_of_week, start_time, end_time))
+            .filter(loc => loc.startsWith(building_input.value));
+        filtered = curr_lectures.concat(unoccupied);
         filtered.sort();
     } else {
         throw 'Unexpected selection value';
