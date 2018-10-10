@@ -45,32 +45,42 @@ function get_current_time() {
     let today = new Date();
     let current_time = [today.getHours(), today.getMinutes()];
     let timeslots = [
-        [8, 30],
-        [9, 30],
-        [10, 30],
-        [11, 30],
-        [12, 30],
-        [13, 30],
-        [14, 30],
-        [15, 30],
-        [16, 30],
-        [17, 30],
-        [19, 0]
+        [[8, 30], [9, 30]],
+        [[9, 30], [10, 30]],
+        [[10, 30], [11, 30]],
+        [[11, 30], [12, 30]],
+        [[12, 30], [13, 30]],
+        [[13, 30], [14, 30]],
+        [[14, 30], [15, 30]],
+        [[15, 30], [16, 30]],
+        [[16, 30], [17, 30]],
+        [[17, 30], [19, 0]],
+        [[19, 0], [22, 0]]
     ];
     let chosen_slot = -1;
     let next_day = false;
-    for (let i = 0; i < timeslots.length; i++) {
-        let last_iter = i === timeslots.length - 1;
-        if (time_le(timeslots[i], current_time) && (last_iter || !time_le(timeslots[i+1], current_time))) {
-            if (time_sub(current_time, timeslots[i]) < 40) {
-                chosen_slot = i;
-            } else if (last_iter) {
-                chosen_slot = 0;
-                next_day = true;
-            } else {
-                chosen_slot = i + 1;
+    if (time_le(current_time, timeslots[0][0])) {
+        // before first
+        chosen_slot = 0;
+    } else if (time_le(timeslots[timeslots.length -1][1], current_time)) {
+        // after last
+        chosen_slot = 0;
+        next_day = true;
+    } else {
+        for (let i = 0; i < timeslots.length; i++) {
+            let last_iter = i === timeslots.length - 1;
+            if (time_le(timeslots[i][0], current_time) && (last_iter || time_le(current_time, timeslots[i][1]))) {
+                if (time_sub(timeslots[i][1], current_time) > 20) {
+                    // more than 20m from end
+                    chosen_slot = i;
+                } else if (last_iter) {
+                    chosen_slot = 0;
+                    next_day = true;
+                } else {
+                    chosen_slot = i + 1;
+                }
+                break;
             }
-            break;
         }
     }
     if (chosen_slot === -1) {
