@@ -175,7 +175,6 @@ function handle_form_submit(event) {
     if (empty_only_selector.value === 'Empty') {
         let unoccupied = Array.from(find_unoccupied(listing, day_of_week, start_time, end_time));
         filtered = unoccupied.filter(loc => loc.startsWith(building));
-        filtered.sort();
     } else if (empty_only_selector.value === 'All') {
         let curr_lectures = find_current_lectures(listing, day_of_week, start_time, end_time)
             .filter(obj => obj.room.startsWith(building))
@@ -185,10 +184,13 @@ function handle_form_submit(event) {
         let unoccupied = Array.from(find_unoccupied(listing, day_of_week, start_time, end_time))
             .filter(loc => loc.startsWith(building));
         filtered = curr_lectures.concat(unoccupied);
-        filtered.sort();
+        filtered = Array.from(new Set(filtered));
     } else {
-        throw 'Unexpected selection value';
+        throw 'Unexpected selection value: ' + empty_only_selector.value;
     }
+
+    filtered.sort();
+
     let output_div = document.getElementById('request-output');
     output_div.innerHTML = '';
     for (let room of filtered) {
