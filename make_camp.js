@@ -209,7 +209,7 @@ window.onload = function() {
     input_form.addEventListener('click', handle_form_submit, false);
     let input_building = document.getElementById('input-building');
     input_building.onkeydown = function (event) {
-        if (event.keyCode === 13) {
+        if (event.key === 'Enter') {
             handle_form_submit(undefined);
         }
     };
