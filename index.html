@@ -1,78 +1,135 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <!-- Global site tag (gtag.js) - Google Analytics -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=UA-128061659-1"></script>
     <script>
         window.dataLayer = window.dataLayer || [];
-        function gtag(){dataLayer.push(arguments);}
+        function gtag() { dataLayer.push(arguments); }
         gtag('js', new Date());
 
         gtag('config', 'UA-128061659-1');
     </script>
     <script src="mac_course_listing_less.min.js"></script>
     <script src="make_camp.js"></script>
-    <link rel="stylesheet" type="text/css" href="index.css">
     <meta charset="UTF-8">
     <title>Make Camp</title>
-    <link rel="shortcut icon" type="image/png" href="favicon.png"/>
+    <link rel="shortcut icon" type="image/png" href="favicon.png" />
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <!-- Bootsrap 4 CSS (with Bootswatch-Lux) -->
     <link rel="stylesheet" href="bootstrap/css/bootstrap.min.css">
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="index.css">
 </head>
+
 <body>
-<div class = "container">
-    <div class="row justify-content-center">
-        <div class="col-6">
-            <div class="card">
-                <div id="request-input">
-                        <div id="timeslot-input">
-                            <select title="Day" id="input-day">
-                                <option value="su">Sunday</option>
-                                <option value="mo">Monday</option>
-                                <option value="tu">Tuesday</option>
-                                <option value="we">Wednesday</option>
-                                <option value="th">Thursday</option>
-                                <option value="fr">Friday</option>
-                                <option value="sa">Saturday</option>
-                            </select>
-                            <select title="Time" id="input-time-start">
-                                <option value="8:30">8:30</option>
-                                <option value="9:30">9:30</option>
-                                <option value="10:30">10:30</option>
-                                <option value="11:30">11:30</option>
-                                <option value="12:30">12:30</option>
-                                <option value="13:30">1:30pm</option>
-                                <option value="14:30">2:30pm</option>
-                                <option value="15:30">3:30pm</option>
-                                <option value="16:30">4:30pm</option>
-                                <option value="17:30">5:30pm</option>
-                                <option value="19:00">7:00pm</option>
-                            </select>
-                            <select title="Hours" id="input-time-length">
-                                <option value="1">1 hour</option>
-                                <option value="2">2 hour</option>
-                                <option value="3">3 hour</option>
-                            </select>
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-sm-6">
+                <ul class="nav nav-tabs">
+                    <li class="nav-item">
+                        <a class="nav-link active" data-toggle="tab" href="#home">Room Search</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" data-toggle="tab" href="#class">Class Search</a>
+                    </li>
+                </ul>
+                <div class="tab-content main-content">
+                    <div class="tab-pane fade show active" id="home">
+                        <div id="request-input">
+                            <div class="row dropdown-group" id="timeslot-input">
+                                <div class="dropdown option-dropdown" id="input-day">
+                                    <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true"
+                                        aria-expanded="false">Day</button>
+                                    <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                                        <a class="dropdown-item" data-value="su" href="#">Sunday</a>
+                                        <a class="dropdown-item" data-value="mo" href="#">Monday</a>
+                                        <a class="dropdown-item" data-value="tu" href="#">Tuesday</a>
+                                        <a class="dropdown-item" data-value="we" href="#">Wednesday</a>
+                                        <a class="dropdown-item" data-value="th" href="#">Thursday</a>
+                                        <a class="dropdown-item" data-value="fr" href="#">Friday</a>
+                                        <a class="dropdown-item" data-value="sa" href="#">Saturday</a>
+                                    </div>
+                                </div>
+                                <select id="input-day" class="form-control col-3" style="display:none">
+                                </select>
+
+                                <div class="dropdown option-dropdown" id="input-time-start">
+                                    <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true"
+                                        aria-expanded="false">Time</button>
+                                    <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                                        <a class="dropdown-item" data-value="8:30" href="#">8:30</a>
+                                        <a class="dropdown-item" data-value="9:30" href="#">9:30</a>
+                                        <a class="dropdown-item" data-value="10:30" href="#">10:30</a>
+                                        <a class="dropdown-item" data-value="11:30" href="#">11:30</a>
+                                        <a class="dropdown-item" data-value="12:30" href="#">12:30</a>
+                                        <a class="dropdown-item" data-value="13:30" href="#">1:30pm</a>
+                                        <a class="dropdown-item" data-value="14:30" href="#">2:30pm</a>
+                                        <a class="dropdown-item" data-value="15:30" href="#">3:30pm</a>
+                                        <a class="dropdown-item" data-value="16:30" href="#">4:30pm</a>
+                                        <a class="dropdown-item" data-value="17:30" href="#">5:30pm</a>
+                                        <a class="dropdown-item" data-value="19:00" href="#">7:00pm</a>
+                                    </div>
+                                </div>
+                                <select title="Time" id="input-time-start" style="display:none">
+                                </select>
+
+                                <div class="dropdown option-dropdown" id="input-time-length">
+                                    <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true"
+                                        aria-expanded="false">Duration</button>
+                                    <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                                        <a class="dropdown-item" data-value="1" href="#">1 Hour</a>
+                                        <a class="dropdown-item" data-value="2" href="#">2 Hours</a>
+                                        <a class="dropdown-item" data-value="3" href="#">3 Hours</a>
+                                    </div>
+                                </div>
+                                <select title="Hours" id="input-time-length" class="col-3" style="display:none">
+                                </select>
+                            </div>
+
+                            <div class="row justify-content-center upper-margin">
+                                <div class="form-group">
+                                    <input type="text" class="form-control" title="Building" id="input-building" placeholder="Building">
+                                </div>
+                                <div class="dropdown option-dropdown" style="margin-left: 0.5em" id="input-empty-only">
+                                    <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true"
+                                        aria-expanded="false">Room Type</button>
+                                    <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                                        <a class="dropdown-item" data-value="0" href="#">Emty Rooms Only</a>
+                                        <a class="dropdown-item" data-value="1" href="#">All Rooms</a>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!--<select id="input-empty-only" title="Empty Only" name="onlyEmpty">
+                                <option value="Empty">Empty rooms only</option>
+                                <option value="All">All rooms</option>
+                            </select>-->
+                            <div class="row justify-content-center upper-margin-small">
+                                <button type="button" class="btn btn-primary" id="submit-data">Submit</button>
+                            </div>
                         </div>
-                        <div id="input-building-div" style="display: flex; justify-content: space-between">
-                            <input type="text" title="Building" id="input-building" placeholder="Building">
+                        <div id="request-output">
                         </div>
-                        <select id="input-empty-only" title="Empty Only" name="onlyEmpty">
-                            <option value="Empty">Empty rooms only</option>
-                            <option value="All">All rooms</option>
-                        </select>
-                        <button id="submit-data">Submit</button>
                     </div>
-                    <div id="request-output">
+                    <div class="tab-pane fade" id="class">
+
                     </div>
-        </div></div>
+                </div>
+            </div>
+        </div>
     </div>
-</div>
-<!-- Bootstrap 4 Reqs -->
-<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
-<!-- Bootstrap 4 JS -->
-<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+    <!-- Bootstrap 4 Reqs -->
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN"
+        crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
+        crossorigin="anonymous"></script>
+    <!-- Bootstrap 4 JS -->
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
+        crossorigin="anonymous"></script>
+    <!-- Custom JS -->
+    <script src="dropdown.js"></script>
 </body>
+
 </html>

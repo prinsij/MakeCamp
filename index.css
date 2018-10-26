@@ -1,0 +1,36 @@
+.container {
+    margin-top: 2em;
+}
+
+.main-content {
+    border: 1px solid #eceeef;
+    border-top: none;
+    background-color: white;
+    padding: 1em;
+}
+
+.dropdown-group {
+    display: flex;
+    justify-content: space-evenly;
+    align-items: center;
+}
+
+.dropdown-group > .dropdown {  
+    width: 30%;
+}
+
+.dropdown-group > .dropdown > .btn {  
+    width: 100%;
+}
+
+.dropdown-group > .dropdown > .dropdown-menu {  
+    width: 100%;
+}
+
+.upper-margin {
+    margin-top: 1.5em;
+}
+
+.upper-margin-small {
+    margin-top: 1em;
+}
