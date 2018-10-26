@@ -116,6 +116,7 @@ function find_current_lectures(listing, day_of_week, start_time, end_time) {
                                     start_time: time.start_time,
                                     end_time: time.end_time,
                                     course_name: course.name,
+                                    course_code: course.code,
                                     room: location
                                 });
                             }
@@ -179,7 +180,7 @@ function handle_form_submit(event) {
         let curr_lectures = find_current_lectures(listing, day_of_week, start_time, end_time)
             .filter(obj => obj.room.startsWith(building))
             .map(obj => `${obj.room}<br>
-                         ${obj.course_name}<br>
+                         ${obj.course_code} : ${obj.course_name}<br>
                          ${time_print(obj.start_time)}-${time_print(obj.end_time)}`);
         let unoccupied = Array.from(find_unoccupied(listing, day_of_week, start_time, end_time))
             .filter(loc => loc.startsWith(building));
