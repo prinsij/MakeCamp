@@ -220,3 +220,35 @@ window.onload = function() {
     document.getElementById('input-time-start').selectedIndex = curr_timeslot;
 
 };
+
+function find_class(class_name, listing) {
+    let result = [];
+    let process_sections = function(sections) {
+        for (let section of sections) {
+            for (let timeslot of section.times) {
+                if (timeslot.length > 1) {
+                    let [time, location] = decode_timeslot(timeslot);
+                    result.push({
+                        start_time: time.start_time,
+                        end_time: time.end_time,
+                        room: location
+                    });
+                }
+            }
+        }
+    };
+    for (let section of get_all_sections(listing)) {
+        for (let department in listing.courses) {
+            for (let course of listing.courses[department]) {
+                if (course.term !== 1) {
+                    continue;
+
+                }
+                if (course.name.toLowerCase().includes(class_name.toLowerCase())) {
+                    process_sections(course);
+                }
+            }
+        }
+    }
+    return result;
+}
