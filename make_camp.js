@@ -213,6 +213,38 @@
         return locations;
     }
 
+    App.find_class = function(listing, class_name) {
+        const result = [];
+        const process_sections = function(sections) {
+            for (const section of sections) {
+                for (const timeslot of section.times) {
+                    if (timeslot.length > 1) {
+                        const [time, location] = this.decode_timeslot(timeslot);
+                        result.push({
+                            start_time: time.start_time,
+                            end_time: time.end_time,
+                            room: location
+                        });
+                    }
+                }
+            }
+        };
+        for (const department in listing.courses) {
+            for (const course of listing.courses[department]) {
+                if (course.term !== 1) {
+                    continue;
+
+                }
+                if (course.name.toLowerCase().includes(class_name.toLowerCase())) {
+                    if (course.hasOwnProperty('core')) {
+                        process_sections(course.core);
+                    }
+                }
+            }
+        }
+        return result;
+    }
+
     App.handle_form_submit = function(event) {
         const building = $(this.building_input).val().toUpperCase();
         const day_of_week = this.day;
