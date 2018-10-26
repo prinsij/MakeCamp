@@ -91,6 +91,55 @@
             || (time1[0] === time2[0] && time1[1] <= time2[1]);
     }
 
+    App.is_good_room = function(room) {
+        if (room.building === 'JHE') {
+            return true;
+        } else if (room.building === 'BSB') {
+            return -1 <= room.floor && room.floor <= 2;
+        } else if (room.building === 'MDCL') {
+            return room.floor === 1;
+        } else if (room.building === 'TSH') {
+            return -1 <= room.floor && room.floor <= 1;
+        }
+        return true;
+    }
+
+    App.parse_room = function(roomstr) {
+        // don't worry about nested or multiple parens and such
+        const room_without_comments = roomstr.replace(/\(.*\)/mg, '');
+        const [building, number] = roomstr.split(' ');
+
+        if (number === undefined) {
+            return false;
+        }
+
+        let section = '';
+        let floor = '1';
+        let room = '';
+        if (number[0] === 'B') {
+            floor = - Number.parseInt(number[1]);
+            room = Number.parseInt(number.substr(2));
+        } else if (!number[0].match(/\d/)){
+            section = number[0];
+            floor = Number.parseInt(number[1]);
+            room = Number.parseInt(number.substr(2));
+        } else {
+            floor = number[0];
+            room = Number.parseInt(number.substr(1));
+        }
+
+        if (!Number.parseInt(room)) {
+            return false;
+        }
+
+        return {
+            building: building,
+            floor: floor,
+            room: room,
+            section: section
+        }
+    }
+
     App.get_current_time = function() {
         const today = new Date();
         const current_time = [today.getHours(), today.getMinutes()];
