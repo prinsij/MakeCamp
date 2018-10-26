@@ -318,20 +318,26 @@
         const time_length = Number(this.duration);
         const end_time = [start_time[0] + time_length, start_time[1] - 1];
 
-        let filtered = [];
-        if (this.room_type === 'Empty') {
-            const unoccupied = Array.from(this.find_unoccupied(listing, day_of_week, start_time, end_time));
-            filtered = unoccupied.filter(App.is_good_room)
-                .filter(loc => loc.hasOwnProperty('building') && loc.building.startsWith(building))
-        } else if (this.room_type === 'All') {
+        let fetch_lectures = () => {
             let curr_lectures = this.find_current_lectures(listing, day_of_week, start_time, end_time)
                 .filter(obj => App.is_good_room(obj.location))
                 .filter(obj => obj.location.hasOwnProperty('building') && obj.location.building.startsWith(building));
-            curr_lectures = Array.from(new Set(curr_lectures));
-            const unoccupied = Array.from(this.find_unoccupied(listing, day_of_week, start_time, end_time))
+            return Array.from(new Set(curr_lectures));
+        };
+
+        let fetch_unoccupied = () => {
+            return Array.from(this.find_unoccupied(listing, day_of_week, start_time, end_time))
                 .filter(App.is_good_room)
                 .filter(loc => loc.hasOwnProperty('building') && loc.building.startsWith(building));
-            filtered = curr_lectures.concat(unoccupied);
+        };
+
+        let filtered = [];
+        if (this.room_type === 'Empty') {
+            filtered = fetch_unoccupied();
+        } else if (this.room_type === 'All') {
+            filtered = fetch_lectures().concat(fetch_unoccupied());
+        } else if (this.room_type === 'Lectures') {
+            filtered = fetch_lectures();
         } else {
             throw 'Unexpected selection value: ' + this.room_type;
         }
