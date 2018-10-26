@@ -27,6 +27,10 @@
     width: 100%;
 }
 
+#input-building {
+    text-transform: uppercase;
+}
+
 .upper-margin {
     margin-top: 1.5em;
 }
