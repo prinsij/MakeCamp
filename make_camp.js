@@ -93,13 +93,23 @@
     }
 
     App.is_good_room = function(room) {
-        if (room.building === 'JHE') {
+        if (!room.hasOwnProperty('building')) {
+            return false;
+        } else if (room.building === 'JHE') {
             return true;
         } else if (room.building === 'BSB') {
             return -1 <= room.floor && room.floor <= 2;
         } else if (room.building === 'MDCL') {
             return room.floor === 1;
         } else if (room.building === 'TSH') {
+            return -1 <= room.floor && room.floor <= 1;
+        } else if (room.building === 'CNH') {
+            return -1 <= room.floor && room.floor <= 1;
+        } else if (room.building === 'ETB') {
+            return -1 <= room.floor && room.floor <= 1;
+        } else if (room.building === 'LRW') {
+            return -1 <= room.floor && room.floor <= 1;
+        } else if (room.building === 'ITB') {
             return -1 <= room.floor && room.floor <= 1;
         }
         return true;
@@ -127,7 +137,7 @@
             floor = Number.parseInt(number[1]);
             room = Number.parseInt(number.substr(2));
         } else {
-            floor = number[0];
+            floor = Number.parseInt(number[0]);
             room = Number.parseInt(number.substr(1));
         }
 
@@ -311,12 +321,15 @@
         let filtered = [];
         if (this.room_type === 'Empty') {
             const unoccupied = Array.from(this.find_unoccupied(listing, day_of_week, start_time, end_time));
-            filtered = unoccupied.filter(loc => loc.hasOwnProperty('building') && loc.building.startsWith(building));
+            filtered = unoccupied.filter(App.is_good_room)
+                .filter(loc => loc.hasOwnProperty('building') && loc.building.startsWith(building))
         } else if (this.room_type === 'All') {
             let curr_lectures = this.find_current_lectures(listing, day_of_week, start_time, end_time)
+                .filter(obj => App.is_good_room(obj.location))
                 .filter(obj => obj.location.hasOwnProperty('building') && obj.location.building.startsWith(building));
             curr_lectures = Array.from(new Set(curr_lectures));
             const unoccupied = Array.from(this.find_unoccupied(listing, day_of_week, start_time, end_time))
+                .filter(App.is_good_room)
                 .filter(loc => loc.hasOwnProperty('building') && loc.building.startsWith(building));
             filtered = curr_lectures.concat(unoccupied);
         } else {
