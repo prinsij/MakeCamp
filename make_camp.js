@@ -6,10 +6,12 @@
         time: null,
         time_dropdown: '#input-time-start',
         duration: null,
+        smart_filter: null,
         duration_dropdown: '#input-time-length',
         room_type: "Empty",
         room_type_dropdown: '#input-empty-only',
         submit_button: '#submit-data',
+        smart_filter_check: 'filter-rooms-check',
         building_input: '#input-building',
         output_container: '#request-output',
     };
@@ -47,7 +49,12 @@
         $(this.room_type_dropdown).find('.dropdown-menu > .dropdown-item[data-default]').each(function() {
             App.update_value($(this), 'room_type');
         });
-    }
+        const checkbox = document.getElementById(this.smart_filter_check);
+        this.smart_filter = checkbox.checked;
+        checkbox.addEventListener('change', () => {
+            this.smart_filter = checkbox.checked;
+        })
+    };
 
     App.get_locations = function(listing) {
         const result = new Set();
@@ -320,14 +327,14 @@
 
         let fetch_lectures = () => {
             let curr_lectures = this.find_current_lectures(listing, day_of_week, start_time, end_time)
-                .filter(obj => App.is_good_room(obj.location))
+                .filter(obj => !App.smart_filter || App.is_good_room(obj.location))
                 .filter(obj => obj.location.hasOwnProperty('building') && obj.location.building.startsWith(building));
             return Array.from(new Set(curr_lectures));
         };
 
         let fetch_unoccupied = () => {
             return Array.from(this.find_unoccupied(listing, day_of_week, start_time, end_time))
-                .filter(App.is_good_room)
+                .filter(obj => !App.smart_filter || App.is_good_room(obj))
                 .filter(loc => loc.hasOwnProperty('building') && loc.building.startsWith(building));
         };
 
