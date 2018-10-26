@@ -166,6 +166,7 @@
                                         start_time: time.start_time,
                                         end_time: time.end_time,
                                         course_name: course.name,
+                                        course_code: course.code,//course.code.split(' ')[1],
                                         room: location
                                     });
                                 }
@@ -259,9 +260,13 @@
         } else if (this.room_type === 'All') {
             const curr_lectures = this.find_current_lectures(listing, day_of_week, start_time, end_time)
                 .filter(obj => obj.room.startsWith(building))
-                .map(obj => `${obj.room}
+                .map(obj => `
+                         <div>${obj.room}
+                             <span class="ccode">${obj.course_code}</span>
+                             <span class="time">${this.time_print(obj.start_time)}-${this.time_print(obj.end_time)}</span>
+                         </div>
                          <span class="cname">${obj.course_name}</span>
-                         <span class="time">${this.time_print(obj.start_time)}-${this.time_print(obj.end_time)}</span>`);
+                        `);
             const unoccupied = Array.from(this.find_unoccupied(listing, day_of_week, start_time, end_time))
                 .filter(loc => loc.startsWith(building));
             filtered = curr_lectures.concat(unoccupied);

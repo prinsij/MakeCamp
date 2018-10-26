@@ -43,12 +43,22 @@
 #request-output > li {
     display: flex;
     justify-content: space-between;
+    flex-direction: column;
+    width: 100%;
 }
 
 #request-output > li > .cname {
     font-style: italic;
+    text-align: center;
 }
 
-#request-output > li > .time {
+#request-output > li > div > .time {
     font-weight: bold;
+}
+
+#request-output > li > div {
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+    justify-content: space-between;
 }
