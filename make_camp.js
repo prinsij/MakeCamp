@@ -48,6 +48,7 @@
             App.update_value($(this), 'room_type');
         });
     }
+
     App.get_locations = function(listing) {
         const result = new Set();
         const process_sections = function (sections) {
@@ -110,7 +111,9 @@
         const [building, number] = roomstr.split(' ');
 
         if (number === undefined) {
-            return false;
+            return {
+                literal: room_without_comments
+            };
         }
 
         let section = '';
@@ -129,15 +132,18 @@
         }
 
         if (!Number.parseInt(room)) {
-            return false;
+            return {
+                literal: room_without_comments
+            };
         }
 
         return {
             building: building,
             floor: floor,
             room: room,
-            section: section
-        }
+            section: section,
+            literal: room_without_comments
+        };
     }
 
     App.get_current_time = function() {
@@ -216,7 +222,7 @@
                                         end_time: time.end_time,
                                         course_name: course.name,
                                         course_code: course.code,//course.code.split(' ')[1],
-                                        room: location
+                                        location: App.parse_room(location)
                                     });
                                 }
                             }
@@ -260,7 +266,7 @@
                 }
             }
         }
-        return locations;
+        return Array.from(locations).map(App.parse_room);
     }
 
     App.find_class = function(listing, class_name) {
@@ -305,29 +311,40 @@
         let filtered = [];
         if (this.room_type === 'Empty') {
             const unoccupied = Array.from(this.find_unoccupied(listing, day_of_week, start_time, end_time));
-            filtered = unoccupied.filter(loc => loc.startsWith(building));
+            filtered = unoccupied.filter(loc => loc.hasOwnProperty('building') && loc.building.startsWith(building));
         } else if (this.room_type === 'All') {
-            const curr_lectures = this.find_current_lectures(listing, day_of_week, start_time, end_time)
-                .filter(obj => obj.room.startsWith(building))
-                .map(obj => `
-                         <div>${obj.room}
-                             <span class="ccode">${obj.course_code}</span>
-                             <span class="time">${this.time_print(obj.start_time)}-${this.time_print(obj.end_time)}</span>
-                         </div>
-                         <span class="cname">${obj.course_name}</span>
-                        `);
+            let curr_lectures = this.find_current_lectures(listing, day_of_week, start_time, end_time)
+                .filter(obj => obj.location.hasOwnProperty('building') && obj.location.building.startsWith(building));
+            curr_lectures = Array.from(new Set(curr_lectures));
             const unoccupied = Array.from(this.find_unoccupied(listing, day_of_week, start_time, end_time))
-                .filter(loc => loc.startsWith(building));
+                .filter(loc => loc.hasOwnProperty('building') && loc.building.startsWith(building));
             filtered = curr_lectures.concat(unoccupied);
-            filtered = Array.from(new Set(filtered));
         } else {
             throw 'Unexpected selection value: ' + this.room_type;
         }
 
-        filtered.sort();
+        filtered.sort(function(x, y) {
+            function get_key(q) {
+                return q.hasOwnProperty('location') ? q.location.literal : q.literal;
+            }
+            return get_key(x) < get_key(y) ? -1
+                : get_key(x) > get_key(y) ? 1
+                    : 0;
+        });
+
+        let output_strs = filtered.map(obj => {
+            if (!obj.hasOwnProperty('course_code')) {
+                return obj.literal;
+            }
+            return `<div>${obj.location.literal}
+                      <span class="ccode">${obj.course_code}</span>
+                      <span class="time">${this.time_print(obj.start_time)}-${this.time_print(obj.end_time)}</span>
+                    </div>
+                    <span class="cname">${obj.course_name}</span>`;
+        });
 
         $(this.output_container).empty();
-        for (const room of filtered) {
+        for (const room of output_strs) {
             $(this.output_container).append(
                 $(`<li class="list-group-item">${room}</li>`)
             );
