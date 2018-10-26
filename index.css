@@ -19,11 +19,11 @@
     width: 30%;
 }
 
-.dropdown-group > .dropdown > .btn {  
+.dropdown > .btn {  
     width: 100%;
 }
 
-.dropdown-group > .dropdown > .dropdown-menu {  
+.dropdown > .dropdown-menu {  
     width: 100%;
 }
 
@@ -33,4 +33,22 @@
 
 .upper-margin-small {
     margin-top: 1em;
+}
+
+.output-container {
+    max-height: 40em;
+    overflow-y: scroll;
+}
+
+#request-output > li {
+    display: flex;
+    justify-content: space-between;
+}
+
+#request-output > li > .cname {
+    font-style: italic;
+}
+
+#request-output > li > .time {
+    font-weight: bold;
 }

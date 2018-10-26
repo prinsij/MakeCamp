@@ -79,7 +79,7 @@
                                     <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true"
                                         aria-expanded="false">Duration</button>
                                     <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                                        <a class="dropdown-item" data-value="1" href="#">1 Hour</a>
+                                        <a class="dropdown-item" data-value="1" data-default href="#">1 Hour</a>
                                         <a class="dropdown-item" data-value="2" href="#">2 Hours</a>
                                         <a class="dropdown-item" data-value="3" href="#">3 Hours</a>
                                     </div>
@@ -90,14 +90,14 @@
 
                             <div class="row justify-content-center upper-margin">
                                 <div class="form-group">
-                                    <input type="text" class="form-control" title="Building" id="input-building" placeholder="Building">
+                                    <input type="text" class="form-control" title="Building" id="input-building" placeholder="Any Building">
                                 </div>
                                 <div class="dropdown option-dropdown" style="margin-left: 0.5em" id="input-empty-only">
                                     <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true"
                                         aria-expanded="false">Room Type</button>
                                     <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                                        <a class="dropdown-item" data-value="0" href="#">Emty Rooms Only</a>
-                                        <a class="dropdown-item" data-value="1" href="#">All Rooms</a>
+                                        <a class="dropdown-item" data-value="Empty" data-default href="#">Empty Rooms Only</a>
+                                        <a class="dropdown-item" data-value="All" href="#">All Rooms</a>
                                     </div>
                                 </div>
                             </div>
@@ -110,7 +110,9 @@
                                 <button type="button" class="btn btn-primary" id="submit-data">Submit</button>
                             </div>
                         </div>
-                        <div id="request-output">
+                        <div class="output-container upper-margin">
+                            <ul id="request-output" class="list-group">
+                            </li>
                         </div>
                     </div>
                     <div class="tab-pane fade" id="class">
@@ -128,8 +130,6 @@
     <!-- Bootstrap 4 JS -->
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
         crossorigin="anonymous"></script>
-    <!-- Custom JS -->
-    <script src="dropdown.js"></script>
 </body>
 
 </html>
