@@ -144,7 +144,7 @@
     }
 
     App.time_print = function(time) {
-        return time[0] + ':' + time[1];
+        return time[0] + ':' + (time[1].toString().length === 1 ? '0' : '') + time[1];
     }
 
     App.find_current_lectures = function(listing, day_of_week, start_time, end_time) {
