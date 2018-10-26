@@ -117,7 +117,7 @@
             chosen_slot = 0;
             next_day = true;
         } else {
-            for (const i = 0; i < timeslots.length; i++) {
+            for (let i = 0; i < timeslots.length; i++) {
                 const last_iter = i === timeslots.length - 1;
                 if (this.time_le(timeslots[i][0], current_time) && (last_iter || this.time_le(current_time, timeslots[i][1]))) {
                     if (this.time_sub(timeslots[i][1], current_time) > 20) {
