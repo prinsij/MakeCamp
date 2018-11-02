@@ -31,6 +31,10 @@
     text-transform: uppercase;
 }
 
+#input-course {
+    text-transform: uppercase;
+}
+
 #filter-rooms-check {
     display: inline;
     margin: .2em;
@@ -57,16 +61,20 @@
     width: 100%;
 }
 
-#request-output > li > .cname {
+#request-output .cname {
     font-style: italic;
     text-align: center;
 }
 
-#request-output > li > div > .time {
+#request-output .time {
     font-weight: bold;
 }
 
-#request-output > li > div {
+#request-output .time {
+    font-weight: bold;
+}
+
+#request-output li > div {
     display: flex;
     flex-direction: row;
     width: 100%;

@@ -11,9 +11,12 @@
         room_type: "Empty",
         room_type_dropdown: '#input-empty-only',
         submit_button: '#submit-data',
+        submit_button_csearch: '#submit-data-csearch',
         smart_filter_check: 'filter-rooms-check',
         building_input: '#input-building',
+        course_input: '#input-course',
         output_container: '#request-output',
+        tab_list: '#tab-list'
     };
     App.update_value = function($item, key) {
         App[key] = $item.data('value');
@@ -30,10 +33,17 @@
         this.hook(this.duration_dropdown, 'duration');
         this.hook(this.room_type_dropdown, 'room_type');
 
+        $(this.tab_list).click(this.clear_output.bind(App));
         $(this.submit_button).click(this.handle_form_submit.bind(App));
+        $(this.submit_button_csearch).click(this.handle_course_form_submit.bind(App));
         $(this.building_input).keydown(function(event) {
             if (event.key === 'Enter') {
                 App.handle_form_submit.call(App, undefined);
+            }
+        });
+        $(this.course_input).keydown(function(event) {
+            if (event.key === 'Enter') {
+                App.handle_course_form_submit.call(App, undefined);
             }
         });
         const [curr_day_of_week, curr_timeslot] = this.get_current_time();
@@ -219,6 +229,25 @@
         return time[0] + ':' + (time[1].toString().length === 1 ? '0' : '') + time[1];
     }
 
+    App.grab_lecture_info = function(time, location, course) {
+        return {
+            day: time.day_of_week,
+            start_time: time.start_time,
+            end_time: time.end_time,
+            course_name: course.name,
+            course_code: course.code,//course.code.split(' ')[1],
+            location: App.parse_room(location)
+        };
+    }
+
+    App.format_lecture_info = function(obj) {
+        return `<div>${obj.location.literal}
+                  <span class="ccode">${obj.course_code}</span>
+                  <span class="time">${this.time_print(obj.start_time)}-${this.time_print(obj.end_time)}</span>
+                </div>
+                <span class="cname">${obj.course_name}</span>`
+    }
+
     App.find_current_lectures = function(listing, day_of_week, start_time, end_time) {
         const result = [];
         for (const department in listing.courses) {
@@ -234,13 +263,7 @@
                                 if (time.day_of_week === day_of_week
                                     && this.time_le(time.start_time, end_time)
                                     && this.time_le(start_time, time.end_time)) {
-                                    result.push({
-                                        start_time: time.start_time,
-                                        end_time: time.end_time,
-                                        course_name: course.name,
-                                        course_code: course.code,//course.code.split(' ')[1],
-                                        location: App.parse_room(location)
-                                    });
+                                    result.push(App.grab_lecture_info(time, location, course));
                                 }
                             }
                         }
@@ -286,36 +309,75 @@
         return Array.from(locations).map(App.parse_room);
     }
 
-    App.find_class = function(listing, class_name) {
-        const result = [];
-        const process_sections = function(sections) {
-            for (const section of sections) {
-                for (const timeslot of section.times) {
-                    if (timeslot.length > 1) {
-                        const [time, location] = this.decode_timeslot(timeslot);
-                        result.push({
-                            start_time: time.start_time,
-                            end_time: time.end_time,
-                            room: location
-                        });
-                    }
-                }
-            }
-        };
+    App.short_to_long_day_of_week = function(short) {
+        return {
+            'mo': 'Monday',
+            'tu': 'Tuesday',
+            'we': 'Wednesday',
+            'th': 'Thursday',
+            'fr': 'Friday',
+            'sa': 'Saturday',
+            'su': 'Sunday'
+        }[short];
+    }
+
+    App.handle_course_form_submit = function(event) {
+        const substr = $(this.course_input).val().toUpperCase();
+        const matching_courses = [];
         for (const department in listing.courses) {
             for (const course of listing.courses[department]) {
                 if (course.term !== 1) {
                     continue;
-
                 }
-                if (course.name.toLowerCase().includes(class_name.toLowerCase())) {
+                if (course.name.toUpperCase().search(substr) !== -1 || course.code.toUpperCase().search(substr) !== -1) {
                     if (course.hasOwnProperty('core')) {
-                        process_sections(course.core);
+                        let this_course = [];
+                        for (const section of course.core) {
+                            for (const timeslot of section.times) {
+                                if (timeslot.length > 1) {
+                                    const [time, location] = this.decode_timeslot(timeslot);
+                                    const obj = App.grab_lecture_info(time, location, course);
+                                    this_course.push(
+                                        `<div>${obj.location.literal}<span>${App.short_to_long_day_of_week(time.day_of_week)}</span>
+                                           <span class="time">${this.time_print(obj.start_time)}-${this.time_print(obj.end_time)}</span>
+                                         </div>`);
+                                }
+                            }
+                        }
+                        this_course = [`<span class="ccode">${course.code}</span><span class="cname">${course.name}</span>`].concat(Array.from(new Set(this_course)));
+                        if (this_course.length > 1) {
+                            matching_courses.push(this_course);
+                        }
                     }
                 }
             }
         }
-        return result;
+        App.display_output(matching_courses);
+    }
+
+    App.clear_output = function() {
+        $(this.output_container).empty();
+    }
+
+    App.display_output = function(output_strs) {
+        App.clear_output();
+        const output_container = $(this.output_container);
+        function inner(output_strs) {
+            for (const item of output_strs) {
+                if (Array.isArray(item)) {
+                    let sublist = '';
+                    for (const iitem of item.slice(1)) {
+                        sublist += `<li class="list-group-item">${iitem}</li>`;
+                    }
+                    output_container.append(`<li class="list-group-item text-center">${item[0]}<ul class="list-group">${sublist}</ul></li>`);
+                } else {
+                    output_container.append(
+                        $(`<li class="list-group-item">${item}</li>`)
+                    );
+                }
+            }
+        }
+        inner(output_strs);
     }
 
     App.handle_form_submit = function(event) {
@@ -362,19 +424,9 @@
             if (!obj.hasOwnProperty('course_code')) {
                 return obj.literal;
             }
-            return `<div>${obj.location.literal}
-                      <span class="ccode">${obj.course_code}</span>
-                      <span class="time">${this.time_print(obj.start_time)}-${this.time_print(obj.end_time)}</span>
-                    </div>
-                    <span class="cname">${obj.course_name}</span>`;
+            return App.format_lecture_info(obj);
         });
-
-        $(this.output_container).empty();
-        for (const room of output_strs) {
-            $(this.output_container).append(
-                $(`<li class="list-group-item">${room}</li>`)
-            );
-        }
+        App.display_output(output_strs);
     }
     window.App = App;
     window.addEventListener('load', function() {

@@ -27,7 +27,7 @@
     <div class="container">
         <div class="row justify-content-center">
             <div class="col-sm-6">
-                <ul class="nav nav-tabs">
+                <ul class="nav nav-tabs" id="tab-list">
                     <li class="nav-item">
                         <a class="nav-link active" data-toggle="tab" href="#home">Room Search</a>
                     </li>
@@ -113,13 +113,17 @@
                                 <button type="button" class="btn btn-primary" id="submit-data">Submit</button>
                             </div>
                         </div>
-                        <div class="output-container upper-margin">
-                            <ul id="request-output" class="list-group">
-                            </ul>
-                        </div>
                     </div>
                     <div class="tab-pane fade" id="class">
-
+                        <div class="form-group">
+                            <input type="text" class="form-control" title="Course Search" id="input-course" placeholder="Course">
+                        </div>
+                        <div class="row justify-content-center upper-margin-small">
+                            <button type="button" class="btn btn-primary" id="submit-data-csearch">Submit</button>
+                        </div>
+                    </div>
+                    <div class="output-container upper-margin">
+                        <ul id="request-output" class="list-group"></ul>
                     </div>
                 </div>
             </div>
