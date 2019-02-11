@@ -1,5 +1,6 @@
 'use strict';
 (function() {
+    const CURRENT_TERM = 2;
     const App = {
         day: null,
         day_dropdown: '#input-day',
@@ -252,7 +253,7 @@
         const result = [];
         for (const department in listing.courses) {
             for (const course of listing.courses[department]) {
-                if (course.term !== 1) {
+                if (course.term !== CURRENT_TERM) {
                     continue;
                 }
                 if (course.hasOwnProperty('core')) {
@@ -292,7 +293,7 @@
         };
         for (const department in listing.courses) {
             for (const course of listing.courses[department]) {
-                if (course.term !== 1) {
+                if (course.term !== CURRENT_TERM) {
                     continue;
                 }
                 if (course.hasOwnProperty('core')) {
@@ -326,7 +327,7 @@
         const matching_courses = [];
         for (const department in listing.courses) {
             for (const course of listing.courses[department]) {
-                if (course.term !== 1) {
+                if (course.term !== CURRENT_TERM) {
                     continue;
                 }
                 if (course.name.toUpperCase().search(substr) !== -1 || course.code.toUpperCase().search(substr) !== -1) {
